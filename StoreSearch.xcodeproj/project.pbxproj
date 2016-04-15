@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AF048DD01CC12F5300D3DC5E /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF048DCF1CC12F5300D3DC5E /* SearchResult.swift */; };
 		AFAEA2B11CC0E65600CCDA67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAEA2B01CC0E65600CCDA67 /* AppDelegate.swift */; };
 		AFAEA2B31CC0E65600CCDA67 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAEA2B21CC0E65600CCDA67 /* SearchViewController.swift */; };
 		AFAEA2B61CC0E65600CCDA67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AFAEA2B41CC0E65600CCDA67 /* Main.storyboard */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AF048DCF1CC12F5300D3DC5E /* SearchResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
 		AFAEA2AD1CC0E65600CCDA67 /* StoreSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFAEA2B01CC0E65600CCDA67 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AFAEA2B21CC0E65600CCDA67 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
@@ -55,6 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				AFAEA2B01CC0E65600CCDA67 /* AppDelegate.swift */,
+				AF048DCF1CC12F5300D3DC5E /* SearchResult.swift */,
 				AFAEA2B21CC0E65600CCDA67 /* SearchViewController.swift */,
 				AFAEA2B41CC0E65600CCDA67 /* Main.storyboard */,
 				AFAEA2B71CC0E65600CCDA67 /* Assets.xcassets */,
@@ -96,6 +99,7 @@
 				TargetAttributes = {
 					AFAEA2AC1CC0E65600CCDA67 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = CCU95JF8QH;
 					};
 				};
 			};
@@ -136,6 +140,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFAEA2B31CC0E65600CCDA67 /* SearchViewController.swift in Sources */,
+				AF048DD01CC12F5300D3DC5E /* SearchResult.swift in Sources */,
 				AFAEA2B11CC0E65600CCDA67 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -249,10 +254,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = StoreSearch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = datatalks.cn.StoreSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -260,10 +268,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = StoreSearch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = datatalks.cn.StoreSearch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -286,6 +297,7 @@
 				AFAEA2C11CC0E65600CCDA67 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
