@@ -14,12 +14,13 @@ class SearchViewController: UIViewController {
 
     
     var searchResults = [SearchResult]()
-    
     var hasSearched = false
+    var isLoading = false //show the loading cell boolean
 
     struct TableViewCellIdentifiers{
         static let searchResultCell = "SearchResultCell"
         static let nothingFoundCell = "NothingFoundCell"
+        static let loadingCell = "LoadingCell"
     }
     
     override func viewDidLoad() {
@@ -36,20 +37,24 @@ class SearchViewController: UIViewController {
         var cellNib = UINib(nibName: TableViewCellIdentifiers.searchResultCell, bundle: nil)
         tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.searchResultCell)
         
+        //Nothing Found NIB
         cellNib = UINib(nibName: TableViewCellIdentifiers.nothingFoundCell, bundle: nil)
         tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.nothingFoundCell)
+        
+        //Loading Cell NIB
+        cellNib = UINib(nibName: TableViewCellIdentifiers.loadingCell, bundle: nil)
+        tableView.registerNib(cellNib, forCellReuseIdentifier: TableViewCellIdentifiers.loadingCell)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-}
 
     //search items
     func urlWithSearchText(searchText:String) -> NSURL {
         let escapeSearchText = searchText.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-        let urlString = String(format: "https://itunes.apple.com/search?term=%@", escapeSearchText)
+        let urlString = String(format: "https://itunes.apple.com/search?term=%@&limit=200", escapeSearchText)
         let url = NSURL(string: urlString)
         return url!
 }
@@ -65,37 +70,38 @@ class SearchViewController: UIViewController {
     }
 
 
-func parseJSON(jsonString:String) -> [String:AnyObject]? {
-    guard let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding)
+    func parseJSON(jsonString:String) -> [String:AnyObject]? {
+      guard let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding)
         else {
             return nil
-    }
-    do{
-        return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String: AnyObject]
-    }catch {
-        print("JSON Error: \(error)")
-        return nil
-    }
+      }
+        
+      do{
+          return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String: AnyObject]
+      } catch {
+          print("JSON Error: \(error)")
+          return nil
+      }
 }
 
 
-func parseDictionary(dictionary: [String: AnyObject]) -> [SearchResult]{
-    //1 make sure the dictionary has a key named results that contains an array
-    guard let array = dictionary["results"] as? [AnyObject] else{
-        print("Expected 'results' array")
-        return []
-    }
+    func parseDictionary(dictionary: [String: AnyObject]) -> [SearchResult]{
+        //1 make sure the dictionary has a key named results that contains an array
+        guard let array = dictionary["results"] as? [AnyObject] else{
+            print("Expected 'results' array")
+            return []
+        }
     
-    var searchResults = [SearchResult]()
+        var searchResults = [SearchResult]()
     
-    //2 once its satisfied that array exists, the method uses a for-in loop to look at each of the array's elements in turn
-    for resultDict in array {
-        //3
-        if let resultDict = resultDict as? [String: AnyObject]{
+        //2 once its satisfied that array exists, the method uses a for-in loop to look at each of the array's elements in turn
+        for resultDict in array {
+            //3
+            if let resultDict = resultDict as? [String: AnyObject]{
             
-            var searchResult:SearchResult?
+                var searchResult:SearchResult?
             //4
-            if let wrapperType = resultDict["wrapperType"] as? String{
+                if let wrapperType = resultDict["wrapperType"] as? String{
                 
                 switch wrapperType{
                     case "track": searchResult = parseTrack(resultDict)
@@ -140,10 +146,10 @@ func parseTrack(dictionary: [String: AnyObject]) -> SearchResult {
 }
 
 
-
 /////////////////////////////////
 /// 3 kinds of contents /////////
 /////////////////////////////////
+
 
 func parseAudioBook(dictionary:[String:AnyObject]) -> SearchResult {
     let searchResult = SearchResult()
@@ -199,8 +205,21 @@ func parseEBook(dictionary: [String: AnyObject]) -> SearchResult {
     return searchResult
 }
 
+func showNetworkError() {
+    let alert = UIAlertController(
+        title: "Whooops",
+        message: "There was an error reading from the Itune Store, please try again!",
+        preferredStyle: .Alert)
+    
+    let action = UIAlertAction(title: "OK", style: .Default, handler: nil)
+    alert.addAction(action)
+    
+    presentViewController(alert, animated: true, completion: nil)
+  }
 
-//*********************************//
+}
+//here } indicates the end of the class: SearchViewController:UIViewController
+
 
     //add delegate code into an extension
     extension SearchViewController: UISearchBarDelegate{
@@ -210,40 +229,45 @@ func parseEBook(dictionary: [String: AnyObject]) -> SearchResult {
             if !searchBar.text!.isEmpty{
             searchBar.resignFirstResponder()//hide keyboard after finishing searching
             
+            isLoading = true //loading cell activiry indicator start animation
+            tableView.reloadData()
+            
+            
             searchResults = [SearchResult]()
             hasSearched = true
+            
+            let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
                 
-            let url = urlWithSearchText(searchBar.text!)
-            //print("URL:'\(url)'")
+            dispatch_async(queue){
+                //code that needs to run in the background
+                let url = self.urlWithSearchText(searchBar.text!)
                 
-                if let jsonString = performStoreRequestWithURL(url){
-                    if let dictionary = parseJSON(jsonString){
-                        print("Dictionary \(dictionary)")
-                        
-                        searchResults = parseDictionary(dictionary)
-                        //parseDictionary(dictionary)
-                        
-                        //sorting the searching result
-                        searchResults.sortInPlace(<)
-                        //searchResults.sortInPlace({result1, result2 in
-                        //    return result1.name.localizedStandardCompare(result2.name) == .OrderedAscending
-                        //searchResults.sortInPlace { &0.name.localizedStandardCompare($1.name) == .OrderedAscending }
-                        //})
-                        
-                        tableView.reloadData()
+                if let jsonString = self.performStoreRequestWithURL(url),
+                   let dictionary = self.parseJSON(jsonString){
+                    
+                        self.searchResults = self.parseDictionary(dictionary)
+                        self.searchResults.sortInPlace(<)
+                       
+                        dispatch_async(dispatch_get_main_queue()){
+                            //update the UI
+                            self.isLoading = false
+                            self.tableView.reloadData()
+                        }
                         return
+                }
+                
+                dispatch_async(dispatch_get_main_queue()){
+                    self.showNetworkError()
                     }
                 }
-            
-           // showNetworkError()
             }
         }
-        
+            
         //remove the top white in status bar
         func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
             return .TopAttached
         }
-    }
+}
 
 
 
@@ -251,7 +275,9 @@ func parseEBook(dictionary: [String: AnyObject]) -> SearchResult {
         
         
         func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            if !hasSearched {
+            if isLoading   {
+                return 1
+            }else if !hasSearched {
                 return 0
             }else if searchResults.count == 0 {
                 return 1
@@ -262,6 +288,13 @@ func parseEBook(dictionary: [String: AnyObject]) -> SearchResult {
         
         
         func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+            
+            if isLoading {
+                let cell = tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.loadingCell, forIndexPath: indexPath)
+                let spinner = cell.viewWithTag(100) as! UIActivityIndicatorView
+                spinner.startAnimating()
+                return cell
+            }
             
             if searchResults.count == 0 {
                 return tableView.dequeueReusableCellWithIdentifier(TableViewCellIdentifiers.nothingFoundCell, forIndexPath: indexPath)
@@ -308,7 +341,7 @@ func parseEBook(dictionary: [String: AnyObject]) -> SearchResult {
         
         //you can only select row with actual search results
         func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-            if searchResults.count == 0 {
+            if searchResults.count == 0 || isLoading {
                 return nil
             }else {
                 return indexPath
