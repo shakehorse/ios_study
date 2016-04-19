@@ -65,12 +65,12 @@
 				AFAEA2B01CC0E65600CCDA67 /* AppDelegate.swift */,
 				AF048DCF1CC12F5300D3DC5E /* SearchResult.swift */,
 				AFAEA2B21CC0E65600CCDA67 /* SearchViewController.swift */,
+				AF231B841CC4226E0025171E /* SearchResultCell.swift */,
 				AFAEA2B41CC0E65600CCDA67 /* Main.storyboard */,
 				AFAEA2B71CC0E65600CCDA67 /* Assets.xcassets */,
 				AFAEA2B91CC0E65600CCDA67 /* LaunchScreen.storyboard */,
 				AFAEA2BC1CC0E65600CCDA67 /* Info.plist */,
 				AF048DD11CC1A50600D3DC5E /* SearchResultCell.xib */,
-				AF231B841CC4226E0025171E /* SearchResultCell.swift */,
 				AF231B861CC42AF40025171E /* NothingFoundCell.xib */,
 			);
 			path = StoreSearch;
