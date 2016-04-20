@@ -16,6 +16,7 @@ class SearchViewController: UIViewController {
     var searchResults = [SearchResult]()
     var hasSearched = false
     var isLoading = false //show the loading cell boolean
+    var dataTask: NSURLSessionTask?
 
     struct TableViewCellIdentifiers{
         static let searchResultCell = "SearchResultCell"
@@ -217,6 +218,7 @@ func showNetworkError() {
             if !searchBar.text!.isEmpty{
             searchBar.resignFirstResponder()//hide keyboard after finishing searching
             
+            dataTask?.cancel()
             isLoading = true //loading cell activiry indicator start animation
             tableView.reloadData()
             
@@ -228,11 +230,11 @@ func showNetworkError() {
                 
             let session = NSURLSession.sharedSession()
                 
-            let dataTask = session.dataTaskWithURL(url, completionHandler: {
+            dataTask = session.dataTaskWithURL(url, completionHandler: {
                     data, response, error in
                     
-                    if let error = error {
-                        print("Failure! \(error)")
+                    if let error = error where error.code == -999{
+                        return 
                     }else if let httpResponse = response as? NSHTTPURLResponse
                         where httpResponse.statusCode == 200{
                         //parse data
@@ -257,7 +259,7 @@ func showNetworkError() {
                     self.showNetworkError()
                 }
             })
-            dataTask.resume()
+            dataTask!.resume()
              }
             }
                 
