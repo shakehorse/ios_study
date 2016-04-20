@@ -59,31 +59,19 @@ class SearchViewController: UIViewController {
         return url!
 }
 
-    //call to String(contentsofURL, encoding) that returns a new string object with the data it receives from the server at other end of the URL
-    func performStoreRequestWithURL(url:NSURL) -> String?{
-        do{
-            return try String(contentsOfURL: url, encoding: NSUTF8StringEncoding)
+
+
+    func parseJSON(data:NSData) -> [String:AnyObject]? {
+        do {
+            return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String: AnyObject]
         }catch{
-            print("Download Error: \(error)")
+            print("JSON Error: \(error)")
             return nil
         }
     }
-
-
-    func parseJSON(jsonString:String) -> [String:AnyObject]? {
-      guard let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding)
-        else {
-            return nil
-      }
-        
-      do{
-          return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String: AnyObject]
-      } catch {
-          print("JSON Error: \(error)")
-          return nil
-      }
-}
-
+    
+    
+    
 
     func parseDictionary(dictionary: [String: AnyObject]) -> [SearchResult]{
         //1 make sure the dictionary has a key named results that contains an array
@@ -236,7 +224,46 @@ func showNetworkError() {
             searchResults = [SearchResult]()
             hasSearched = true
             
-            let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+            let url = urlWithSearchText(searchBar.text!)
+                
+            let session = NSURLSession.sharedSession()
+                
+            let dataTask = session.dataTaskWithURL(url, completionHandler: {
+                    data, response, error in
+                    
+                    if let error = error {
+                        print("Failure! \(error)")
+                    }else if let httpResponse = response as? NSHTTPURLResponse
+                        where httpResponse.statusCode == 200{
+                        //parse data
+                        if let data = data, dictionary = self.parseJSON(data){
+                            self.searchResults = self.parseDictionary(dictionary)
+                            self.searchResults.sortInPlace(<)
+                            
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.isLoading = false
+                                self.tableView.reloadData()
+                                //print("on the main thread?" + (NSThread.currentThread().isMainThread ? "YES" : "No"))
+                            }
+                            return
+                        }
+                    }else {
+                        print("Failure! \(response!)")
+                    }
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.hasSearched = false
+                    self.isLoading = false
+                    self.tableView.reloadData()
+                    self.showNetworkError()
+                }
+            })
+            dataTask.resume()
+             }
+            }
+                
+                
+                
+                /*let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
                 
             dispatch_async(queue){
                 //code that needs to run in the background
@@ -261,7 +288,7 @@ func showNetworkError() {
                     }
                 }
             }
-        }
+        }*/
             
         //remove the top white in status bar
         func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
