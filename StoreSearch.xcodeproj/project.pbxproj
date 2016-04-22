@@ -16,6 +16,7 @@
 		AFAEA2B31CC0E65600CCDA67 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAEA2B21CC0E65600CCDA67 /* SearchViewController.swift */; };
 		AFAEA2B61CC0E65600CCDA67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AFAEA2B41CC0E65600CCDA67 /* Main.storyboard */; };
 		AFAEA2B81CC0E65600CCDA67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFAEA2B71CC0E65600CCDA67 /* Assets.xcassets */; };
+		AFB41E871CC919DE004D6012 /* UIImageView+DownloadImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB41E861CC919DE004D6012 /* UIImageView+DownloadImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		AFAEA2B51CC0E65600CCDA67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AFAEA2B71CC0E65600CCDA67 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AFAEA2BC1CC0E65600CCDA67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AFB41E861CC919DE004D6012 /* UIImageView+DownloadImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+DownloadImage.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,8 +66,9 @@
 			children = (
 				AFAEA2B01CC0E65600CCDA67 /* AppDelegate.swift */,
 				AF048DCF1CC12F5300D3DC5E /* SearchResult.swift */,
-				AFAEA2B21CC0E65600CCDA67 /* SearchViewController.swift */,
 				AF231B841CC4226E0025171E /* SearchResultCell.swift */,
+				AFAEA2B21CC0E65600CCDA67 /* SearchViewController.swift */,
+				AFB41E861CC919DE004D6012 /* UIImageView+DownloadImage.swift */,
 				AFAEA2B41CC0E65600CCDA67 /* Main.storyboard */,
 				AFAEA2B71CC0E65600CCDA67 /* Assets.xcassets */,
 				AFAEA2BC1CC0E65600CCDA67 /* Info.plist */,
@@ -154,6 +157,7 @@
 				AF048DD01CC12F5300D3DC5E /* SearchResult.swift in Sources */,
 				AF231B851CC4226E0025171E /* SearchResultCell.swift in Sources */,
 				AFAEA2B11CC0E65600CCDA67 /* AppDelegate.swift in Sources */,
+				AFB41E871CC919DE004D6012 /* UIImageView+DownloadImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
