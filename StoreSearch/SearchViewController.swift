@@ -205,6 +205,16 @@ func parseEBook(dictionary: [String: AnyObject]) -> SearchResult {
     return searchResult
 }
 
+    
+override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "ShowDetail" {
+            let detailViewController = segue.destinationViewController as! DetailViewController
+            let indexPath = sender as! NSIndexPath
+            let searchResult = searchResults[indexPath.row]
+            detailViewController.searchResult = searchResult
+        }
+    }
+
 func showNetworkError() {
     let alert = UIAlertController(
         title: "Whooops",
@@ -357,6 +367,8 @@ extension SearchViewController: UISearchBarDelegate {
         //simply deselect the row with an animation
         func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            
+            performSegueWithIdentifier("ShowDetail", sender: indexPath)
         }
         
         //you can only select row with actual search results
