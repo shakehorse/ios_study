@@ -58,6 +58,8 @@ class DetailViewController: UIViewController {
         if searchResult != nil{
             updateUI()
         }
+        
+        view.backgroundColor = UIColor.clearColor()
     }
     
     
@@ -111,6 +113,14 @@ extension DetailViewController: UIViewControllerTransitioningDelegate{
         return DimmingPresentationController(
             presentedViewController: presented,
             presentingViewController: presenting)
+    }
+    
+    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return BounceAnimationController()
+    }
+    
+    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return SlideOutAnimationController()
     }
 }
 
